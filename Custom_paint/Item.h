@@ -1,23 +1,29 @@
 #pragma once
 
 #include <QtWidgets/QGraphicsItem>
+#include <QObject>
+#include "Point.h"
+#include <memory>
 
-class Item : public QGraphicsItem
+class Item : public QObject, public QGraphicsItem
 {
+	Q_OBJECT
 public :
-	Item(const int& x, const int& y);
+	explicit Item(const int& x, const int& y, QObject* parent = 0);
+	explicit Item(std::shared_ptr<Point> point, QObject* parent = 0);
+	
 	virtual ~Item();
 
-	int getX1()const;
-	int getY1()const;
-	int getX2()const;
-	int getY2()const;
+	std::shared_ptr<Point> getPoint1()const;
+	std::shared_ptr<Point> getPoint2()const;
+	
+	void setPoint1(const int& x, const int& y);
+	void setPoint2(const int& x, const int& y);
 
-	void change_x2_and_y2(const int& x, const int& y);
-protected :
-	int x1;
-	int x2;
-	int y1;
-	int y2;
+	virtual void move(const int& x, const int& y) = 0;
+	virtual void startMove(const int& x, const int& y) = 0;
+
+protected :	
+	std::shared_ptr<Point> _point1;
+	std::shared_ptr<Point> _point2;
 };
-

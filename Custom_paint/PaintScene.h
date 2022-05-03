@@ -4,17 +4,20 @@
 #include <QtWidgets/QGraphicsSceneEvent>
 #include <QtWidgets/QGraphicsSceneMouseEvent>
 #include <QTimer>
-#include <vector>
+#include <list>
 #include "Rectangle.h"
 #include "Triangle.h"
 #include "Circle.h"
+#include "Line.h"
 
 typedef enum {
 	DRAW_RECTANGLE,
 	DRAW_CIRCLE,
 	DRAW_TRIANGLE,
-	DRAW_UNKNOW
-} draw_item;
+	DRAW_LINE,
+	MOVING,
+	UNKNOW
+} Action;
 
 
 class PaintScene : public QGraphicsScene
@@ -24,16 +27,26 @@ public :
 	explicit PaintScene(QObject *parent = 0);
 	~PaintScene();
 
-//public slots:
-	void changeDrawItem(const draw_item& new_item);
+	void changeAction(const Action& new_item);
 private:
-	QPointF		previousPoint;
-	std::list<Item*> item_array;
+	std::list<Figura*> figura_array;
+	std::list<Line*> line_array;
 
-	draw_item item = DRAW_UNKNOW;
+	Action action = UNKNOW;
 
-	void mousePressEvent(QGraphicsSceneMouseEvent*);
-	void mouseMoveEvent(QGraphicsSceneMouseEvent*);
-//private slots:
+	void mousePressEvent(QGraphicsSceneMouseEvent* event);
+	void mouseMoveEvent(QGraphicsSceneMouseEvent* event);
+	void mouseReleaseEvent(QGraphicsSceneMouseEvent* event);
+
+	void draw_line_in_center(const int& x, const int& y);
+	
+	void addFigura(QGraphicsSceneMouseEvent* event);
+	void addLine(QGraphicsSceneMouseEvent* event);
+
+	void moveItem(const int& x, const int& y);
+	void startMoveItem(const int& x, const int& y);
+	void bindLine(const int& x, const int& y);
+
+	Figura* currentFigura;
 };
 

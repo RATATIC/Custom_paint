@@ -6,8 +6,10 @@
 class Rectangle : public Figura
 {
 public :
-	Rectangle(const int& x, const int& y);
+	explicit Rectangle(const int& x, const int& y);
 	~Rectangle();
+
+	bool isInFigura(const int& x, const int& y) const override;
 
 protected:
 	void paint(QPainter *painter, const QStyleOptionGraphicsItem* option, QWidget* widget);

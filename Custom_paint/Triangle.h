@@ -6,8 +6,10 @@
 class Triangle : public Figura
 {
 public:
-	Triangle(const int& x, const int& y);
+	explicit Triangle(const int& x, const int& y);
 	~Triangle();
+
+	bool isInFigura(const int& x, const int& y) const override;
 protected:
 	int getMiddleSide_X() const;
 

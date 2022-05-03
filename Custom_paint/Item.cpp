@@ -1,31 +1,29 @@
 #include "Item.h"
 
-Item::Item(const int& x, const int& y) {
-	x1 = x;
-	x2 = x + 1;
-	y1 = y;
-	y2 = y + 1;
+Item::Item(const int& x, const int& y, QObject* parent ) : QObject(parent) {
+	_point1 = std::make_shared<Point>(x, y);
+	_point2 = std::make_shared<Point>(x, y);
+}
+
+Item::Item(std::shared_ptr<Point> point, QObject* parent) : QObject(parent) {
+	_point1 = point; 
+	_point2 = std::make_shared<Point> (point->getX(), point->getY());
 }
 
 Item::~Item() {}
 
-void Item::change_x2_and_y2(const int& x, const int& y) {
-	x2 = x;
-	y2 = y;
+std::shared_ptr<Point> Item::getPoint1()const {
+	return _point1;
+}
+std::shared_ptr<Point> Item::getPoint2()const {
+	return _point2;
 }
 
-int Item::getX1() const {
-	return this->x1;
+void Item::setPoint1(const int& x, const int& y) {
+	_point1->setX(x);
+	_point1->setY(y);
 }
-
-int Item::getY1() const {
-	return this->y1;
-}
-
-int Item::getX2() const {
-	return this->x2;
-}
-
-int Item::getY2() const {
-	return this->y2;
+void Item::setPoint2(const int& x, const int& y) {
+	_point2->setX(x);
+	_point2->setY(y);
 }

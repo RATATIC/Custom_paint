@@ -7,9 +7,10 @@
 class Circle : public Figura
 {
 public:
-	Circle(const int& x, const int& y);
+	explicit Circle(const int& x, const int& y);
 	~Circle();
 
+	bool isInFigura(const int& x, const int& y) const override;
 protected:
 	int getRadius_X() const;
 	int getRadius_Y() const;

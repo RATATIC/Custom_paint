@@ -88,7 +88,9 @@
     <ClCompile Include="Circle.cpp" />
     <ClCompile Include="Figura.cpp" />
     <ClCompile Include="Item.cpp" />
+    <ClCompile Include="Line.cpp" />
     <ClCompile Include="PaintScene.cpp" />
+    <ClCompile Include="Point.cpp" />
     <ClCompile Include="Rectangle.cpp" />
     <ClCompile Include="Triangle.cpp" />
     <QtRcc Include="Custom_paint.qrc" />
@@ -100,7 +102,9 @@
   <ItemGroup>
     <ClInclude Include="Circle.h" />
     <ClInclude Include="Figura.h" />
-    <ClInclude Include="Item.h" />
+    <QtMoc Include="Item.h" />
+    <ClInclude Include="Line.h" />
+    <ClInclude Include="Point.h" />
     <ClInclude Include="Triangle.h" />
     <QtMoc Include="PaintScene.h" />
     <ClInclude Include="Rectangle.h" />
