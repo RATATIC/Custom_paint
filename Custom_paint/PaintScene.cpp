@@ -6,12 +6,7 @@ PaintScene::PaintScene(QObject* parent) : QGraphicsScene(parent) {
 }
 
 PaintScene::~PaintScene() {
-	for (auto* it : figura_array) {
-		delete it;
-	}
-	for (auto* it : line_array) {
-		delete it;
-	}
+	deleteAllItems();
 }
 
 void PaintScene::mousePressEvent(QGraphicsSceneMouseEvent* event) {
@@ -75,7 +70,7 @@ void PaintScene::addFigura(QGraphicsSceneMouseEvent* event) {
 void PaintScene::addLine(QGraphicsSceneMouseEvent* event) {
 	for (const auto& it : figura_array) {
 		if (it->isInFigura(event->scenePos().x(), event->scenePos().y()) == true) {
-			line_array.push_back(new Line(it->getCenterPoint()));
+			line_array.push_back(new Line(it->getCenterPoint(), it->getName()));
 			this->addItem(line_array.back());
 
 			currentFigura = it;
@@ -99,7 +94,7 @@ void PaintScene::draw_line_in_center(const int& x, const int& y) {
 void PaintScene::bindLine(const int& x, const int& y) {
 	for (const auto& it : figura_array) {
 		if (it->isInFigura(x, y) && currentFigura != it) {
-			line_array.back()->bindPoint (it->getCenterPoint());
+			line_array.back()->boundPoint2 (it->getCenterPoint(), it->getName());
 			return;
 		}
 	}
@@ -123,4 +118,111 @@ void PaintScene::moveItem(const int& x, const int& y) {
 void PaintScene::changeAction(const Action& new_action) {
 	if (new_action >= DRAW_RECTANGLE || new_action <= UNKNOW)
 		this->action = new_action;
+}
+
+void PaintScene::getVectorItems(std::vector<std::string>& vec_str) const{
+	for (const auto& it : figura_array)
+		vec_str.push_back(it->getItemInfo());
+
+	for (const auto& it : line_array)
+		vec_str.push_back(it->getItemInfo());
+}
+
+void PaintScene::createNewScene(const std::vector<std::string>& vec_str) {
+	deleteAllItems();
+
+	std::stringstream ss;
+	std::string word;
+	std::vector <std::string> item_info;
+
+	for (const auto& it : vec_str) {
+		{	
+			std::stringstream ss (it);
+			while (ss >> word)
+				item_info.push_back(word);
+		}
+		if (item_info[0].compare(Line::TYPE) != 0)
+			addFigura(item_info);
+		item_info.clear();
+		ss.clear();
+	}
+
+	qDebug() << "1";
+	
+	for (const auto& it : vec_str) {
+		{
+			std::stringstream ss(it);
+			while (ss >> word) {
+				item_info.push_back(word);
+				qDebug() << QString(word.c_str());
+			}
+		}
+
+		if (item_info[0].compare(Line::TYPE) == 0) {
+			qDebug() << "4";
+			addLine(item_info);
+			qDebug() << "2";
+		}
+		item_info.clear();
+	}
+	qDebug() << "3";
+	this->update();
+}
+
+void PaintScene::addLine(const std::vector<std::string>& item_info) {
+
+	line_array.push_back(new Line(Point(std::stoi(item_info[1]), std::stoi(item_info[2])), Point(std::stoi(item_info[3]), std::stoi(item_info[4]))));
+	line_array.back()->setName(item_info[5]);
+	this->addItem(line_array.back());
+
+	if (item_info.size() < 6)
+		return;
+
+	for (const auto& it : figura_array) {
+		if (it->getName().compare(item_info[item_info.size() - 1]) == 0) {
+			if (it->getCenterPoint()->getX() == line_array.back()->getPoint1()->getX() && it->getCenterPoint()->getY() == line_array.back()->getPoint1()->getY()) {
+				line_array.back()->swapPoints();
+			}
+			line_array.back()->boundPoint2(it->getCenterPoint(), it->getName());
+		}
+	}
+
+	if (item_info.size() < 7)
+		return;
+
+	for (const auto& it : figura_array) {
+		if (it->getName().compare(item_info[item_info.size() - 2]) == 0) {
+			line_array.back()->boundPoint1(it->getCenterPoint(), it->getName());
+		}
+	}
+}
+
+void PaintScene::addFigura(const std::vector<std::string>& item_info) {
+	if (item_info.empty())
+		return;
+
+	if (item_info[0].compare(Rectangle::TYPE) == 0) {
+		figura_array.push_back(new Rectangle(Point(std::stoi(item_info[1]), std::stoi(item_info[2])), Point(std::stoi(item_info[3]), std::stoi(item_info[4])) ));
+	}
+	else if (item_info[0].compare(Circle::TYPE) == 0) {
+		figura_array.push_back(new Circle(Point(std::stoi(item_info[1]), std::stoi(item_info[2])), Point(std::stoi(item_info[3]), std::stoi(item_info[4])) ));
+	}
+	else if (item_info[0].compare(Triangle::TYPE) == 0) {
+		figura_array.push_back(new Triangle(Point(std::stoi(item_info[1]), std::stoi(item_info[2])), Point(std::stoi(item_info[3]), std::stoi(item_info[4])) ));
+	}
+	figura_array.back()->setName(item_info[5]);
+	this->addItem(figura_array.back());
+}
+
+void PaintScene::deleteAllItems() {
+	for (auto* it : figura_array) {
+		this->removeItem(it);
+		delete it;
+	}
+	std::list<Figura*>().swap(figura_array);
+	for (auto* it : line_array) {
+		this->removeItem(it);
+		delete it;
+	}
+	std::list<Line*>().swap(line_array);
 }

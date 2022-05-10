@@ -13,7 +13,8 @@ Custom_paint::Custom_paint(QWidget *parent)
     connect(ui->radioButton_3, SIGNAL(clicked()), this, SLOT(clicked_button_triangle()));
     connect(ui->radioButton_4, SIGNAL(clicked()), this, SLOT(clicked_button_line()));
     connect(ui->radioButton_5, SIGNAL(clicked()), this, SLOT(clicked_button_move()));
-    connect(ui->pushButton,    SIGNAL(clicked()), this, SLOT(clicked_button_save()));
+    connect(ui->pushButton_1,  SIGNAL(clicked()), this, SLOT(clicked_button_save()));
+    connect(ui->pushButton_2,  SIGNAL(clicked()), this, SLOT(clicked_button_open()));
 
     timer = new QTimer();
     connect(timer, &QTimer::timeout, this, &Custom_paint::slotTimer);
@@ -41,13 +42,17 @@ void Custom_paint::clicked_button_move() {
 }
 
 void Custom_paint::clicked_button_save() {
-    QString newPath = QFileDialog::getSaveFileName(this, QString("Save PNG"), path, tr("PNG files (*.png)"));
+    std::vector<std::string> vec_str;
+    scene->getVectorItems(vec_str);
+
+    QString newPath = QFileDialog::getSaveFileName(this, QString("Save"), path, tr("TXT files (*.txt)"));
 
     if (newPath.isEmpty())
         return;
     path = newPath;
 
-    QPixmap pixmap (scene->width() - 5, scene->height() - 40);
+    /*
+    QPixmap pixmap(scene->width() - 5, scene->height() - 40);
     pixmap.fill(Qt::white);
     QPainter painter;
 
@@ -56,10 +61,43 @@ void Custom_paint::clicked_button_save() {
     painter.drawRect(5, 40, scene->width(), scene->height());
     painter.end();
 
+    pixmap.save(&file, "PNG");    
+    */
     QFile file(path);
-    file.open(QIODevice::WriteOnly);
+    if (file.open(QIODevice::WriteOnly)) {
+        QTextStream stream(&file);
+        for ( auto& it : vec_str)
+            stream << it.c_str () << "\n";
+        file.close();
+    }
+}
 
-    pixmap.save(&file, "PNG");
+void Custom_paint::clicked_button_open() {
+    QString newPath = QFileDialog::getOpenFileName(this, QString("Save"), path, tr("TXT files (*.txt)"));
+    
+    std::vector<std::string> vec_str;
+    
+    if (newPath.isEmpty())
+        return;
+    path = newPath;
+
+    QFile file(path);
+    
+    QString buffer;
+
+    if (file.open(QIODevice::ReadOnly)) {
+        QTextStream stream(&file);
+        while (!stream.atEnd()) {
+            buffer = stream.readLine();
+            
+            qDebug() << buffer;
+            
+            vec_str.push_back(buffer.toStdString());
+        }
+        file.close();
+    }
+
+    scene->createNewScene(vec_str);
 }
 
 Custom_paint::~Custom_paint() {

@@ -7,6 +7,9 @@
 #include <QBuffer>
 #include <QImage>
 
+#include <vector>
+#include <string>
+
 #include "ui_Custom_paint.h"
 #include "PaintScene.h"
 
@@ -33,4 +36,5 @@ private slots:
     void clicked_button_line();
     void clicked_button_move();
     void clicked_button_save();
+    void clicked_button_open();
 };

@@ -1,6 +1,15 @@
 #include "Triangle.h"
 
-Triangle::Triangle(const int& x, const int& y) : Figura(x, y) {}
+unsigned int Triangle::count = 1;
+const std::string Triangle::TYPE = "Triangle";
+
+Triangle::Triangle(const int& x, const int& y) : Figura(x, y) {
+    setName(getType(), count++);
+}
+
+Triangle::Triangle(const Point& point1, const Point& point2) : Figura(point1, point2) {
+    setName(getType(), count++);
+}
 
 Triangle::~Triangle() {}
 
@@ -22,4 +31,8 @@ bool Triangle::isInFigura(const int& x, const int& y)const {
     int c = (getMiddleSide_X() - x) * (_point2->getY() - _point1->getY()) - (_point2->getX() - getMiddleSide_X()) * (_point1->getY() - y);
 
     return ((a >= 0 && b >= 0 && c >= 0) || (a <= 0 && b <= 0 && c <= 0));
+}
+
+std::string Triangle::getType()const {
+    return TYPE;
 }

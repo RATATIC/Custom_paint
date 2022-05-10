@@ -6,6 +6,7 @@ class Point
 public:
 	Point();
 	explicit Point(const int& x, const int& y);
+	explicit Point(const Point& x);
 	~Point();
 	int getX()const;
 	int getY()const;

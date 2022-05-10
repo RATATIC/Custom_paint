@@ -4,6 +4,10 @@ Figura::Figura(const int& x, const int& y) : Item (x, y) {
     center_point = std::make_shared<Point>(getCenter_X(), getCenter_Y());
 }
 
+Figura::Figura(const Point& point1, const Point& point2) :Item (point1, point2) {
+    center_point = std::make_shared<Point>(getCenter_X(), getCenter_Y());
+}
+
 Figura::~Figura() {}
 
 int Figura::getCenter_X() const {
@@ -40,4 +44,10 @@ void Figura::changeSize(const int& x, const int& y) {
 
 void Figura::changeCenterPoint() {
     center_point->setPoint(getCenter_X(), getCenter_Y());
+}
+
+std::string Figura::getItemInfo()const {
+    return this->getType() + " " + std::to_string(this->getPoint1()->getX())
+        + " " + std::to_string(this->getPoint1()->getY()) + " " + std::to_string(this->getPoint2()->getX())
+        + " " + std::to_string(this->getPoint2()->getY()) + " " + this->getName();
 }

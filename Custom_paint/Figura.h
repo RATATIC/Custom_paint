@@ -8,6 +8,7 @@ class Figura : public Item
 {
 public:
 	explicit Figura(const int& x, const int& y);
+	explicit Figura(const Point& x, const Point& y);
 	~Figura();
 
 	virtual bool isInFigura(const int& x, const int& y) const = 0;
@@ -21,6 +22,8 @@ public:
 
 	int getCenter_X() const;
 	int getCenter_Y() const;
+
+	virtual std::string getItemInfo()const override;
 protected:
 	void changeCenterPoint();
 
